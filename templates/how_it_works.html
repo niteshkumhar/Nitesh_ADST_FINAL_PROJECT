@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works | PCB-Sentry AOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Chakra Petch', sans-serif; }</style>
+</head>
+<body class="bg-[#090b0e] text-slate-100 min-h-screen flex flex-col selection:bg-[#00ff66] selection:text-black">
+<!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-[#0c0f14]/80 backdrop-blur-md px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 overflow-hidden rounded border border-emerald-500/50 flex items-center justify-center bg-black">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PCB-Sentry Logo" class="w-full h-full object-cover">
+            </div>
+            <span class="text-xl font-bold tracking-wider text-white">PCB-SENTRY <span class="text-[#00ff66]">AOI</span></span>
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+            {% if current_user.is_authenticated %}
+                <a href="/dashboard" class="hover:text-white transition">Console</a>
+                <a href="/audit-logs" class="hover:text-white transition">Audit History</a>
+            {% else %}
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/how-it-works" class="text-[#00ff66] transition">How It Works</a>
+            {% endif %}
+            <a href="/about" class="hover:text-white transition">About Us</a>
+        </nav>
+
+        <div class="flex items-center space-x-4">
+            {% if current_user.is_authenticated %}
+                <span class="text-xs font-mono text-slate-300">Operator: <strong class="text-white">{{ current_user.username }}</strong></span>
+                <a href="/logout" class="text-xs bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded hover:bg-red-500/20 transition">Sign Out</a>
+            {% else %}
+                <a href="/login" class="text-xs text-slate-300 hover:text-white transition font-mono">Sign In</a>
+                <a href="/signup" class="text-xs bg-[#00ff66] text-black font-bold px-4 py-2 rounded hover:bg-[#00dd55] transition">Get Started</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Header Section -->
+    <section class="px-8 py-16 max-w-7xl mx-auto w-full space-y-12">
+        <div class="text-center space-y-3">
+            <span class="text-xs text-[#00ff66] font-semibold tracking-wider uppercase">Engineering Architecture</span>
+            <h1 class="text-3xl lg:text-5xl font-bold text-white tracking-wide">Real-Time Machine Vision Pipeline</h1>
+            <p class="text-slate-400 text-sm max-w-2xl mx-auto">Explore how our end-to-end optical scanning framework detects micro-defects at assembly line speeds.</p>
+        </div>
+
+        <!-- NEW: Resized & Centered Video Demonstration Section -->
+        <div class="max-w-4xl mx-auto bg-[#12161d] border border-slate-800 rounded-xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#00ff66] animate-ping"></span>
+                    <span class="text-xs font-mono text-white tracking-wider">LIVE SYSTEM DEMONSTRATION &amp; OVERVIEW</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400">DURATION: 02:45 | 1080P HD</span>
+            </div>
+            <!-- Video Container with 16:9 Aspect Ratio -->
+            <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden border border-slate-800 shadow-inner">
+                <!-- Replace the src attribute with your factory video or MP4 file link -->
+                <iframe class="w-full h-full object-cover" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1&controls=1" title="PCB-Sentry AOI Pipeline Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <p class="text-xs text-slate-400 text-center">Watch how high-speed optical conveyor frames feed real-time YOLOv8 neural inference layers.</p>
+        </div>
+
+        <!-- Interactive Stage Selector UI -->
+        <div class="space-y-6 pt-6">
+            <div class="text-center">
+                <h2 class="text-xl font-bold text-white">Interactive Pipeline Stage Explorer</h2>
+                <p class="text-xs text-slate-400 mt-1">Click a stage below to view system telemetry breakdown</p>
+            </div>
+
+            <!-- Stage Button Nav Tabs -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-2" id="stageTabs">
+                <button onclick="showStage(1)" class="stage-btn bg-[#12161d] border border-[#00ff66] text-[#00ff66] text-xs font-mono py-3 px-2 rounded-lg transition hover:bg-slate-800">01 / CAMERA</button>
+                <button onclick="showStage(2)" class="stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600">02 / OPENCV</button>
+                <button onclick="showStage(3)" class="stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600">03 / YOLOv8</button>
+                <button onclick="showStage(4)" class="stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600">04 / MAPPING</button>
+                <button onclick="showStage(5)" class="stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600">05 / LOGGING</button>
+                <button onclick="showStage(6)" class="stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600">06 / TELEMETRY</button>
+            </div>
+
+            <!-- Dynamic Interactive Panel Box -->
+            <div class="bg-[#12161d] border border-slate-800 p-8 rounded-xl relative overflow-hidden">
+                <div id="stageContent" class="space-y-4">
+                    <span class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/10 px-3 py-1 rounded border border-[#00ff66]/30">STAGE 01 DETAIL</span>
+                    <h3 class="text-2xl font-bold text-white">AOI Camera Conveyor Capture</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed max-w-3xl">
+                        High-frequency optical captures are taken continuously as raw circuit boards move down high-speed Surface Mount Technology (SMT) lines. Specialized lighting filters prevent surface glare from solder joints.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-xs">
+                        <div><span class="text-slate-500 block">Capture Speed</span><strong class="text-white">120 Frames / Sec</strong></div>
+                        <div><span class="text-slate-500 block">Sensor Array</span><strong class="text-white">GigE 4K Optical Matrix</strong></div>
+                        <div><span class="text-slate-500 block">Trigger Mode</span><strong class="text-[#00ff66]">Hardware Photo-Sensor</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hardware & Specs Table -->
+        <div class="bg-[#12161d] border border-slate-800 p-8 rounded-lg space-y-6">
+            <h3 class="text-lg font-bold text-white">Hardware &amp; Sensor Specifications</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs border-t border-slate-800 pt-6">
+                <div>
+                    <span class="text-slate-400 block">CAMERA RESOLUTION</span>
+                    <strong class="text-white text-sm mt-1 block">4K Ultra-HD Optical</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">PROCESSING UNIT</span>
+                    <strong class="text-white text-sm mt-1 block">NVIDIA TensorRT GPU</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">SCAN LATENCY</span>
+                    <strong class="text-[#00ff66] text-sm mt-1 block">50ms Per Frame</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block">INTERFACE PROTOCOL</span>
+                    <strong class="text-white text-sm mt-1 block">GigE Vision / REST API</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript for Interactive Tabs -->
+    <script>
+        const stagesData = {
+            1: {
+                tag: "STAGE 01 DETAIL",
+                title: "AOI Camera Conveyor Capture",
+                desc: "High-frequency optical captures are taken continuously as raw circuit boards move down high-speed Surface Mount Technology (SMT) lines. Specialized lighting filters prevent surface glare from solder joints.",
+                spec1: "120 Frames / Sec", spec2: "GigE 4K Optical Matrix", spec3: "Hardware Photo-Sensor"
+            },
+            2: {
+                tag: "STAGE 02 DETAIL",
+                title: "OpenCV Noise Filtering & Preprocessing",
+                desc: "Raw optical captures pass through adaptive histogram equalization and Gaussian filtering to remove background workspace reflections and normalize lighting levels across copper traces.",
+                spec1: "Gaussian Blur / Denoise", spec2: "Adaptive Thresholding", spec3: "Sub-millisecond Filters"
+            },
+            3: {
+                tag: "STAGE 03 DETAIL",
+                title: "YOLOv8 DeepPCB Model Inference",
+                desc: "Fine-tuned neural weights evaluate spatial trace boundaries against known layout anomaly databases (including open circuits, short circuits, and missing holes) in under 50ms.",
+                spec1: "YOLOv8-DeepPCB Weights", spec2: "50 Training Epochs", spec3: "99.7% Confidence Index"
+            },
+            4: {
+                tag: "STAGE 04 DETAIL",
+                title: "Bounding Box Boundary Mapping",
+                desc: "Detected defects are highlighted with precise color-coded coordinate bounding boxes overlaid directly onto the diagnostic display panels for immediate operator evaluation.",
+                spec1: "Real-time Bounding Boxes", spec2: "Class Confidence Scores", spec3: "RGB Diagnostic Overlays"
+            },
+            5: {
+                tag: "STAGE 05 DETAIL",
+                title: "Automated Audit Log Export",
+                desc: "Every scan result is categorized as PASS or FAIL and written instantly into permanent, encrypted SQLite/PostgreSQL plant management tables for strict quality traceability.",
+                spec1: "Encrypted SQLite Storage", spec2: "Automated Timestamps", spec3: "Operator ID Tagging"
+            },
+            6: {
+                tag: "STAGE 06 DETAIL",
+                title: "Factory Telemetry Harmony & Alerts",
+                desc: "Shift metrics aggregate automatically. Line managers receive real-time defect rate summaries and threshold warnings directly through edge webhooks and dashboard feeds.",
+                spec1: "Shift Defect Rate Tracking", spec2: "Instant Webhook Alerts", spec3: "Exportable CSV/PDF Reports"
+            }
+        };
+
+        function showStage(stageNum) {
+            const data = stagesData[stageNum];
+            document.getElementById('stageContent').innerHTML = `
+                <span class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/15 px-3 py-1 rounded border border-[#00ff66]/30">${data.tag}</span>
+                <h3 class="text-2xl font-bold text-white">${data.title}</h3>
+                <p class="text-sm text-slate-300 leading-relaxed max-w-3xl">${data.desc}</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-xs">
+                    <div><span class="text-slate-500 block">Metric Alpha</span><strong class="text-white">${data.spec1}</strong></div>
+                    <div><span class="text-slate-500 block">Metric Beta</span><strong class="text-white">${data.spec2}</strong></div>
+                    <div><span class="text-slate-500 block">System Mode</span><strong class="text-[#00ff66]">${data.spec3}</strong></div>
+                </div>
+            `;
+
+            const buttons = document.querySelectorAll('.stage-btn');
+            buttons.forEach((btn, index) => {
+                if(index + 1 === stageNum) {
+                    btn.className = "stage-btn bg-[#12161d] border border-[#00ff66] text-[#00ff66] text-xs font-mono py-3 px-2 rounded-lg transition hover:bg-slate-800";
+                } else {
+                    btn.className = "stage-btn bg-[#12161d] border border-slate-800 text-slate-400 text-xs font-mono py-3 px-2 rounded-lg transition hover:text-white hover:border-slate-600";
+                }
+            });
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-[#0c0f14] py-12 px-8 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <span class="text-white font-bold">PCB-SENTRY AOI</span>
+                <span>&copy; 2026 Industrial Vision Systems. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-6 text-slate-400">
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/how-it-works" class="hover:text-white transition">How It Works</a>
+                <a href="/audit-logs" class="hover:text-white transition">History</a>
+                <a href="/about" class="hover:text-white transition">About Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

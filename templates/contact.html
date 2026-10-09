@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Support | PCB-Sentry AOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#090b0e] text-slate-100 min-h-screen flex items-center justify-center p-6 selection:bg-[#00ff66] selection:text-black relative overflow-hidden">
+
+    <!-- Ambient Glow Backgrounds -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#00ff66]/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none">
+    </div>
+
+    <!-- Main Container Card -->
+    <div
+        class="w-full max-w-lg bg-[#12161d] border border-slate-800 rounded-2xl shadow-2xl p-8 relative z-10 space-y-6">
+
+        <!-- Header & Logo -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-8 h-8 overflow-hidden rounded border border-emerald-500/50 flex items-center justify-center bg-black">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PCB-Sentry Logo"
+                        class="w-full h-full object-cover">
+                </div>
+                <span class="text-lg font-bold tracking-wider text-white">PCB-SENTRY <span
+                        class="text-[#00ff66]">AOI</span></span>
+            </div>
+            <a href="/" class="text-xs font-mono text-slate-400 hover:text-white transition">← Home</a>
+        </div>
+
+        <div class="space-y-1">
+            <h1 class="text-xl font-bold text-white tracking-wide">Support Desk & Telemetry Help</h1>
+            <p class="text-xs text-slate-400 font-mono">Submit system diagnostics or connection inquiries to our
+                hardware support engineers.</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="p-4 rounded-xl text-xs font-mono border flex items-center space-x-2 
+            {% if category == 'success' %} bg-emerald-500/10 border-emerald-500 text-emerald-400 
+            {% else %} bg-red-500/10 border-red-500 text-red-400 {% endif %}">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="/contact" method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Operator Name</label>
+                    <input type="text" name="operator_name" required placeholder="Nitesh Kumhar"
+                        class="w-full bg-[#090b0e] border border-slate-800 focus:border-[#00ff66] rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition font-mono">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Work Email</label>
+                    <input type="email" name="email" required placeholder="operator@factory.com"
+                        class="w-full bg-[#090b0e] border border-slate-800 focus:border-[#00ff66] rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition font-mono">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Inquiry Details / Issue
+                    Log</label>
+                <textarea name="message" rows="4" required
+                    placeholder="Describe optical sensor or YOLOv8 frame rate anomaly..."
+                    class="w-full bg-[#090b0e] border border-slate-800 focus:border-[#00ff66] rounded-lg p-3 text-sm text-white placeholder-slate-600 focus:outline-none transition font-mono"></textarea>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-[#00ff66] text-black font-bold text-xs uppercase tracking-wider py-3.5 rounded-lg hover:bg-[#00dd55] transition transform hover:-translate-y-0.5 shadow-lg shadow-[#00ff66]/20">
+                Transmit Support Inquiry
+            </button>
+        </form>
+
+        <div
+            class="flex justify-between items-center text-xs font-mono text-slate-500 pt-2 border-t border-slate-800/60">
+            <span>Direct Hotline: +91 800-PCB-SENTRY</span>
+            <a href="/login" class="text-[#00ff66] hover:underline">Return to Sign In</a>
+        </div>
+    </div>
+</body>
+
+</html>

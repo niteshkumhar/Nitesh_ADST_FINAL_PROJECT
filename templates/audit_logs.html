@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection History | PCB-Sentry AOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#090b0e] text-slate-100 min-h-screen flex flex-col selection:bg-[#00ff66] selection:text-black">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-[#0c0f14]/80 backdrop-blur-md px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 overflow-hidden rounded border border-emerald-500/50 flex items-center justify-center bg-black">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PCB-Sentry Logo" class="w-full h-full object-cover">
+            </div>
+            <span class="text-xl font-bold tracking-wider text-white">PCB-SENTRY <span class="text-[#00ff66]">AOI</span></span>
+        </div>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+            <a href="/dashboard" class="hover:text-white transition">Console</a>
+            <a href="/audit-logs" class="text-[#00ff66] transition">History</a>
+            <a href="/about" class="hover:text-white transition">About Us</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <span class="text-xs font-mono text-slate-300">Operator: <strong class="text-white">{{ session.get('username', 'User') }}</strong></span>
+            <a href="/logout" class="text-xs bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded hover:bg-red-500/20 transition">Sign Out</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="px-8 py-10 max-w-7xl mx-auto w-full space-y-8 flex-grow">
+
+        <!-- Top Header & Summary Stats Row -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div class="space-y-1">
+                <h1 class="text-3xl font-bold text-white tracking-wide">INSPECTION HISTORY</h1>
+                <p class="text-xs text-slate-400">Review historical line scans and isolated board telemetry log files</p>
+            </div>
+            
+          <!-- Mini Telemetry Badges (100% Dynamic) -->
+            <div class="grid grid-cols-3 gap-4 bg-[#12161d] border border-slate-800 px-6 py-3 rounded-xl">
+                <div>
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Total Inspect.</span>
+                    <span class="text-sm font-bold text-white font-mono">{{ total_scanned }}</span>
+                </div>
+                <div class="border-x border-slate-800 px-4">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Pass Rate</span>
+                    <span class="text-sm font-bold text-[#00ff66] font-mono">{{ pass_rate }}%</span>
+                </div>
+                <div>
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Top Defect</span>
+                    <span class="text-sm font-bold text-red-400 font-mono">{{ top_defect }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <form method="GET" action="/audit-logs" class="bg-[#12161d] border border-slate-800 p-4 rounded-xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            
+            <!-- Search Bar -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" name="search" value="{{ request.args.get('search', '') }}" placeholder="Search by Board ID/Filename..." class="w-full bg-[#090b0e] border border-slate-800 text-xs text-slate-300 rounded-lg pl-9 pr-4 py-2.5 focus:outline-none focus:border-[#00ff66] font-mono transition">
+            </div>
+
+            <!-- Date Filter -->
+            <div>
+                <select name="date_range" class="w-full bg-[#090b0e] border border-slate-800 text-xs text-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-[#00ff66] font-mono transition">
+                    <option value="7d">Date: Last 7 Days</option>
+                    <option value="30d">Date: Last 30 Days</option>
+                    <option value="all">Date: All Time</option>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+                <select name="status" class="w-full bg-[#090b0e] border border-slate-800 text-xs text-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-[#00ff66] font-mono transition">
+                    <option value="">Status: All Inspections</option>
+                    <option value="PASS">Status: Passed Only</option>
+                    <option value="FAIL">Status: Failed Only</option>
+                </select>
+            </div>
+
+            <!-- Submit Filter Button -->
+            <div>
+                <button type="submit" class="w-full bg-[#1a212b] hover:bg-[#00ff66] hover:text-black text-white border border-slate-700 text-xs font-mono font-semibold py-2.5 rounded-lg transition">
+                    Apply Filters
+                </button>
+            </div>
+        </form>
+
+        <!-- Audit History Table Section -->
+        <div class="bg-[#12161d] border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-[#090b0e] text-slate-400 font-mono border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                        <tr>
+                            <th class="p-4">Board ID</th>
+                            <th class="p-4">Date / Time</th>
+                            <th class="p-4">Defects Detected</th>
+                            <th class="p-4">Defect Types Detected</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Confidence</th>
+                            <th class="p-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+                        {% for log in logs %}
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-bold text-white">#ADI-2026-{{ log.id }}</td>
+                            <td class="p-4 text-slate-400">{{ log.timestamp.strftime('%Y-%m-%d // %H:%M:%S') }}</td>
+                            <td class="p-4">
+                                {% if log.defect_count > 0 %}
+                                <span class="text-red-400 font-bold">{{ log.defect_count }}</span>
+                                {% else %}
+                                <span class="text-slate-500">0</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-slate-300">
+                                {% if log.defect_types %}
+                                {{ log.defect_types }}
+                                {% else %}
+                                None detected
+                                {% endif %}
+                            </td>
+                            <td class="p-4">
+                                {% if log.status == 'PASS' %}
+                                <span class="bg-[#00ff66]/10 text-[#00ff66] border border-[#00ff66]/30 px-2.5 py-1 rounded text-[10px] font-bold">PASSED</span>
+                                {% else %}
+                                <span class="bg-red-500/10 text-red-400 border border-red-500/30 px-2.5 py-1 rounded text-[10px] font-bold">FAILED</span>
+                                {% endif %}
+                            </td>
+                            <!-- Dynamic Confidence Score from DB -->
+                            <td class="p-4 text-slate-300">{{ log.confidence }}</td>
+                            <td class="p-4 text-right space-x-2">
+                                <a href="#" class="bg-[#1a212b] border border-slate-700 hover:border-[#00ff66] text-white text-[10px] font-semibold px-3 py-1.5 rounded transition">DETAILS</a>
+                                <!-- Single Delete Button Form -->
+                                <form action="{{ url_for('delete_log', log_id=log.id) }}" method="POST" class="inline">
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this scan history?');" class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 text-[10px] font-semibold px-2.5 py-1.5 rounded transition">DELETE</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="p-8 text-center text-slate-500">No matching inspection audit logs found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Table Footer / Dynamic Pagination -->
+            <div class="bg-[#090b0e] border-t border-slate-800 px-6 py-4 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
+                <span>Showing logs {{ pagination.first }} to {{ pagination.last }} of {{ pagination.total }} inspection log entries</span>
+                
+                <div class="flex items-center space-x-1 font-mono">
+                    <!-- PREV Button -->
+                    {% if pagination.has_prev %}
+                    <a href="{{ url_for('audit_logs', page=pagination.prev_num, search=request.args.get('search', ''), status=request.args.get('status', '')) }}" class="px-3 py-1 rounded bg-[#12161d] border border-slate-800 hover:border-slate-600 text-white transition">PREV</a>
+                    {% else %}
+                    <span class="px-3 py-1 rounded bg-[#12161d] border border-slate-800 text-slate-600 cursor-not-allowed">PREV</span>
+                    {% endif %}
+
+                    <!-- Dynamic Page Number Loop -->
+                    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if pagination.page == page_num %}
+                            <span class="px-3 py-1 rounded bg-[#00ff66] text-black font-bold">{{ page_num }}</span>
+                            {% else %}
+                            <a href="{{ url_for('audit_logs', page=page_num, search=request.args.get('search', ''), status=request.args.get('status', '')) }}" class="px-3 py-1 rounded bg-[#12161d] border border-slate-800 hover:border-slate-600 text-white transition">{{ page_num }}</a>
+                            {% endif %}
+                        {% else %}
+                            <span class="px-2 text-slate-600">…</span>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- NEXT Button -->
+                    {% if pagination.has_next %}
+                    <a href="{{ url_for('audit_logs', page=pagination.next_num, search=request.args.get('search', ''), status=request.args.get('status', '')) }}" class="px-3 py-1 rounded bg-[#12161d] border border-slate-800 hover:border-slate-600 text-white transition">NEXT</a>
+                    {% else %}
+                    <span class="px-3 py-1 rounded bg-[#12161d] border border-slate-800 text-slate-600 cursor-not-allowed">NEXT</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-[#0c0f14] py-12 px-8 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <span class="text-white font-bold">PCB-SENTRY AOI</span>
+                <span>&copy; 2026 Industrial Vision Systems. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-6 text-slate-400">
+                <a href="/dashboard" class="hover:text-white transition">Console</a>
+                <a href="/audit-logs" class="hover:text-white transition">History</a>
+                <a href="/about" class="hover:text-white transition">About Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

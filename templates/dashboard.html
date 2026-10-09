@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Console | PCB-Sentry AOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#090b0e] text-slate-100 min-h-screen flex flex-col selection:bg-[#00ff66] selection:text-black">
+
+    <!-- Top Navigation -->
+    <header
+        class="border-b border-slate-800 bg-[#0c0f14]/80 backdrop-blur-md px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-8 h-8 overflow-hidden rounded border border-emerald-500/50 flex items-center justify-center bg-black">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PCB-Sentry Logo"
+                    class="w-full h-full object-cover">
+            </div>
+            <span class="text-xl font-bold tracking-wider text-white">PCB-SENTRY <span
+                    class="text-[#00ff66]">AOI</span></span>
+        </div>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+            <a href="/dashboard" class="text-[#00ff66] transition">Console</a>
+            <a href="/audit-logs" class="hover:text-white transition">Audit History</a>
+            <a href="/about" class="hover:text-white transition">About Us</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <span class="text-xs font-mono text-slate-300">Operator: <strong class="text-white">{{ name
+                    }}</strong></span>
+            <a href="/logout"
+                class="text-xs bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded hover:bg-red-500/20 transition">Sign
+                Out</a>
+        </div>
+    </header>
+
+    <!-- Main Console Container -->
+    <main class="px-8 py-10 max-w-7xl mx-auto w-full space-y-8">
+
+        <!-- Header Status Bar -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center bg-[#12161d] border border-slate-800 p-6 rounded-xl gap-4">
+            <div class="space-y-1">
+                <h1 class="text-2xl font-bold text-white tracking-wide">REAL-TIME INSPECTION CONSOLE</h1>
+                <p class="text-xs text-slate-400 font-mono">AI MODEL: YOLOv8-DeepPCB (50 Epochs) | SMT LINE 04</p>
+            </div>
+            <div
+                class="flex items-center space-x-2 bg-[#00ff66]/10 border border-[#00ff66]/30 px-3.5 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-[#00ff66] animate-ping"></span>
+                <span class="text-xs font-mono text-[#00ff66] font-semibold">DATABASE CONNECTED &amp; ONLINE</span>
+            </div>
+        </div>
+
+        <!-- Real-Time Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Total Scans</span>
+                <h3 class="text-3xl font-bold text-white">{{ total_scanned }}</h3>
+                <span class="text-[11px] text-[#00ff66] font-mono block">✔ Live DB Record Count</span>
+            </div>
+            <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Defects Found</span>
+                <h3 class="text-3xl font-bold text-red-400">{{ total_defects }}</h3>
+                <span class="text-[11px] text-red-400 font-mono block">Instantly isolated</span>
+            </div>
+            <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Defect Rate %</span>
+                <h3 class="text-3xl font-bold text-amber-400">{{ defect_rate }}%</h3>
+                <span class="text-[11px] text-slate-400 font-mono block">Target tolerance &lt;2.0%</span>
+            </div>
+            <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Passed Boards</span>
+                <h3 class="text-3xl font-bold text-[#00ff66]">{{ total_passed }}</h3>
+                <span class="text-[11px] text-[#00ff66] font-mono block">Active robotic clearance</span>
+            </div>
+        </div>
+
+        <!-- Two Column Interactive Section: Drag & Drop Upload + Line Telemetry -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left 2 Cols: Drag & Drop Upload Form -->
+            <div
+                class="lg:col-span-2 bg-[#12161d] border border-dashed border-slate-700 hover:border-[#00ff66] p-8 rounded-xl flex flex-col justify-center items-center text-center space-y-4 transition">
+                <div class="w-12 h-12 rounded-full bg-[#00ff66]/10 flex items-center justify-center text-[#00ff66]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-white font-bold text-base">DRAG &amp; DROP PCB IMAGE</h3>
+                    <p class="text-xs text-slate-400">Supports PNG, JPG, JPEG, TIFF format up to 100MB</p>
+                </div>
+                <form action="/predict" method="POST" enctype="multipart/form-data"
+                    class="w-full max-w-md space-y-3 pt-2">
+                    <input type="file" name="file" accept=".png, .jpg, .jpeg, .tiff" required
+                        class="w-full bg-[#090b0e] border border-slate-800 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-mono file:font-bold file:bg-[#00ff66] file:text-black hover:file:bg-[#00dd55] text-xs text-slate-400 rounded-lg cursor-pointer focus:outline-none transition">
+                    <button type="submit"
+                        class="w-full bg-[#00ff66] text-black font-bold text-xs uppercase tracking-wider py-3 rounded-lg hover:bg-[#00dd55] transition shadow-lg shadow-[#00ff66]/20">
+                        Run AI Inspection
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right 1 Col: Line Status & Model Threshold Widgets -->
+            <div class="space-y-6">
+                <div class="bg-[#12161d] border border-slate-800 p-5 rounded-xl space-y-3">
+                    <h4
+                        class="text-xs font-mono text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                        Line Status</h4>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="flex items-center space-x-2 text-slate-300">
+                            <span class="w-2 h-2 rounded-full bg-[#00ff66] animate-ping"></span>
+                            <span>Conveyor Belt #03</span>
+                        </span>
+                        <span class="font-mono text-[#00ff66] font-bold">ACTIVE // 1.2 m/s</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>System Temperature</span>
+                        <span class="font-mono text-white">41.6 °C</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>Actuator Air Pressure</span>
+                        <span class="font-mono text-white">6.2 Bar</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#12161d] border border-slate-800 p-5 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider">Model Threshold</h4>
+                        <span class="text-xs font-mono text-[#00ff66]">95.0%</span>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+                            <span>Confidence Cutoff</span>
+                            <span>YOLOv8-DeepPCB</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-[#00ff66] h-full w-[95%]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Full-Width Inspection Diagnostic Report Section (Increased Image Height to 420px) -->
+        <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-6">
+            <h3 class="text-white font-bold text-sm tracking-wide border-b border-slate-800 pb-3">INSPECTION DIAGNOSTIC REPORT</h3>
+
+            {% if original_image %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <span class="text-xs font-mono text-slate-400">Input Scan</span>
+                    <div class="bg-black border border-slate-800 rounded-lg h-[420px] flex items-center justify-center p-4">
+                        <img src="{{ original_image }}" alt="Uploaded PCB" class="max-h-full max-w-full object-contain">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-mono text-[#00ff66]">AI Bounding Box Mapping</span>
+                    <div class="bg-black border border-slate-800 rounded-lg h-[420px] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                        <img src="{{ result_image }}" alt="Analyzed PCB" class="max-h-full max-w-full object-contain">
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-400 py-12 text-center font-mono">No scans executed in current session. Upload a board above to generate real-time database results.</p>
+            {% endif %}
+        </div>
+
+        <!-- Side-by-Side Grid for Defect Breakdown & Recent Database Audit Logs -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left Col (1/3 width): Defect Type Breakdown with Multi-Color Bars -->
+            <div class="bg-[#12161d] border border-slate-800 p-6 rounded-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white tracking-wide border-b border-slate-800 pb-3 mb-4 uppercase">Defect Type Breakdown</h3>
+                    
+                    <div class="space-y-4">
+                        {% if defect_counts_dict and defect_counts_dict|length > 0 %}
+                            {% set bar_colors = ['bg-[#00ff66]', 'bg-amber-400', 'bg-cyan-400', 'bg-rose-400', 'bg-purple-400', 'bg-blue-400', 'bg-orange-400'] %}
+                            {% for defect_name, count in defect_counts_dict.items() %}
+                            {% set current_color = bar_colors[loop.index0 % bar_colors|length] %}
+                            <div>
+                                <div class="flex justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-300 capitalize font-medium">{{ defect_name }}</span>
+                                    <span class="text-white font-bold">{{ count }}</span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                    <div class="{{ current_color }} h-full rounded-full transition-all duration-500"
+                                        style="width: {{ (count / (total_defects if total_defects > 0 else 1)) * 100 }}%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <p class="text-xs font-mono text-slate-500 text-center py-12">No active defects recorded in current scan.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Cols (2/3 width): Recent Database Audit Logs Table -->
+            <div class="lg:col-span-2 bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-4 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                        <h3 class="text-white font-bold text-sm">Recent Database Audit Logs</h3>
+                        <a href="/audit-logs" class="text-xs text-[#00ff66] hover:underline font-mono">View All History →</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-[#090b0e] text-slate-400 font-mono">
+                                <tr>
+                                    <th class="p-3">Filename</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Defects</th>
+                                    <th class="p-3">Confidence</th>
+                                    <th class="p-3">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                                {% for scan in recent_scans %}
+                                <tr class="hover:bg-slate-900/40 transition">
+                                    <td class="p-4 text-slate-300">{{ scan.filename }}</td>
+                                    <td class="p-4">
+                                        {% if scan.status == 'FAIL' %}
+                                        <span class="bg-red-500/10 text-red-400 border border-red-500/30 px-2.5 py-1 rounded text-[10px] font-bold">FAIL</span>
+                                        {% else %}
+                                        <span class="bg-[#00ff66]/10 text-[#00ff66] border border-[#00ff66]/30 px-2.5 py-1 rounded text-[10px] font-bold">PASS</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-4 text-white font-bold">{{ scan.defects }}</td>
+                                    <td class="p-4 text-slate-300">{{ scan.confidence }}</td>
+                                    <td class="p-4 text-slate-500">{{ scan.timestamp }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="p-6 text-center text-slate-500">No database audit logs available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-[#0c0f14] py-12 px-8 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <span class="text-white font-bold">PCB-SENTRY AOI</span>
+                <span>&copy; 2026 Industrial Vision Systems. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-6 text-slate-400">
+                <a href="/dashboard" class="hover:text-white transition">Console</a>
+                <a href="/audit-logs" class="hover:text-white transition">Audit History</a>
+                <a href="/about" class="hover:text-white transition">About Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+# Python Environment & Cache
+pcb_env/
+__pycache__/
+*.pyc
+instance/
+.DS_Store
+
+# Heavy Datasets & Raw Images (Keep code/configs, ignore raw data)
+DeepPCB-master/
+PCBData/
+yolo_dataset/
+
+# Dynamic User Uploads & Results
+static/uploads/
+static/results/
+
+# Old Training Runs / Heavy Weight files (Keep only your final best.pt if needed)
+runs/
+*.pt

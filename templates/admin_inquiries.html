@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Inquiries | PCB-Sentry AOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#090b0e] text-slate-100 min-h-screen p-6 selection:bg-[#00ff66] selection:text-black">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header Section -->
+        <div class="flex justify-between items-center bg-[#12161d] border border-slate-800 p-6 rounded-2xl shadow-xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 overflow-hidden rounded-lg border border-emerald-500/50 flex items-center justify-center bg-black">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wider text-white">SUPPORT INQUIRY DESK</h1>
+                    <p class="text-xs text-slate-400 font-mono">Incoming hardware &amp; telemetry help desk logs</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('admin_dashboard') }}" class="text-xs font-mono text-[#00ff66] hover:underline">← Admin Dashboard</a>
+                <a href="/logout" class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 rounded-lg text-xs font-mono hover:bg-red-500/20 transition">Sign Out</a>
+            </div>
+        </div>
+
+        <!-- Inquiries Table Card -->
+        <div class="bg-[#12161d] border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Active Support Tickets</span>
+                <span class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/10 px-3 py-1 rounded border border-[#00ff66]/20">
+                    Total Inquiries: {{ inquiries|length }}
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#0c0f14] text-[11px] font-mono text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <th class="p-4">Ticket ID</th>
+                            <th class="p-4">Timestamp</th>
+                            <th class="p-4">Operator Name</th>
+                            <th class="p-4">Work Email</th>
+                            <th class="p-4">Inquiry / Message Details</th>
+                            <th class="p-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-sm">
+                        {% if inquiries %}
+                            {% for ticket in inquiries %}
+                            <tr class="hover:bg-slate-900/40 transition">
+                                <td class="p-4 font-mono text-xs text-[#00ff66]">#TICK-{{ ticket.id }}</td>
+                                <td class="p-4 font-mono text-xs text-slate-400">{{ ticket.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="p-4 font-bold text-white">{{ ticket.operator_name }}</td>
+                                <td class="p-4 font-mono text-xs text-slate-300"><a href="mailto:{{ ticket.email }}" class="hover:text-[#00ff66] underline">{{ ticket.email }}</a></td>
+                                <td class="p-4 text-slate-300 text-xs leading-relaxed max-w-md">{{ ticket.message }}</td>
+                                <td class="p-4 font-mono text-xs">
+                                    <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2.5 py-1 rounded-full">
+                                        {{ ticket.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="p-12 text-center text-slate-500 font-mono text-xs">
+                                    No support tickets transmitted yet.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

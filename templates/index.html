@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCB-Sentry AOI | Zero Defects. Zero Delays.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#090b0e] text-slate-100 min-h-screen flex flex-col selection:bg-[#00ff66] selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header
+        class="border-b border-slate-800 bg-[#0c0f14]/80 backdrop-blur-md px-8 py-4 flex justify-between items-center sticky top-0 z-50 transition-all">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-8 h-8 overflow-hidden rounded border border-emerald-500/50 flex items-center justify-center bg-black">
+                <img src="{{ url_for('static', filename='/images/logo.png') }}" alt="PCB-Sentry Logo"
+                    class="w-full h-full object-cover">
+            </div>
+            <span class="text-xl font-bold tracking-wider text-white">PCB-SENTRY <span
+                    class="text-[#00ff66]">AOI</span></span>
+
+        </div>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+            <a href="/" class="text-[#00ff66] transition">Home</a>
+            <a href="/how-it-works" class="hover:text-white transition">How It Works</a>
+            <a href="/audit-logs" class="hover:text-white transition">History</a>
+            <a href="/about" class="hover:text-white transition">About Us</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <a href="/login" class="text-xs text-slate-300 hover:text-white transition px-3 py-2">Sign In</a>
+            <a href="/signup"
+                class="text-xs bg-[#00ff66] text-black font-bold px-4 py-2 rounded hover:bg-[#00dd55] transition transform hover:scale-105 shadow-lg shadow-[#00ff66]/10">Get
+                Started</a>
+        </div>
+    </header>
+
+    <!-- Hero Section with Simple Image Preview -->
+    <section
+        class="px-8 py-20 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative overflow-hidden">
+        <!-- Ambient Background Glow -->
+        <div class="absolute -top-20 -left-20 w-96 h-96 bg-[#00ff66]/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="space-y-6 z-10">
+            <div
+                class="inline-flex items-center space-x-2 bg-[#00ff66]/10 border border-[#00ff66]/30 text-[#00ff66] text-xs font-semibold px-3.5 py-1.5 rounded-full tracking-wide">
+                <span class="w-2 h-2 rounded-full bg-[#00ff66]"></span>
+                <span>NEXT-GEN SMT OPTICAL INSPECTION</span>
+            </div>
+            <h1 class="text-4xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
+                Zero Defects. <br><span class="text-[#00ff66] drop-shadow-[0_0_20px_rgba(0,255,102,0.3)]">Zero
+                    Delays.</span>
+            </h1>
+            <p class="text-slate-400 text-sm leading-relaxed max-w-lg">
+                Deploy ultra-fast automated optical inspection for SMT lines with high-accuracy deep learning computer
+                vision models trained to catch micro-fractures, missing pads, and soldering errors instantly.
+            </p>
+            <div class="flex items-center space-x-4 pt-2">
+                <a href="/signup"
+                    class="bg-[#00ff66] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded hover:bg-[#00dd55] transition transform hover:-translate-y-0.5 shadow-lg shadow-[#00ff66]/20 flex items-center space-x-2">
+                    <span>Get Started</span>
+                    <span>→</span>
+                </a>
+                <a href="/how-it-works"
+                    class="border border-slate-700 bg-slate-900/50 text-slate-300 font-semibold text-xs uppercase tracking-wider px-6 py-3.5 rounded hover:bg-slate-800 hover:border-slate-600 transition">
+                    Watch Pipeline
+                </a>
+            </div>
+        </div>
+
+        <!-- Clean Simple Image Display Box -->
+        <div class="relative z-10 group">
+            <div
+                class="absolute -inset-1 bg-gradient-to-r from-[#00ff66] to-emerald-800 rounded-xl blur-md opacity-25 group-hover:opacity-40 transition duration-500">
+            </div>
+            <div class="relative bg-[#12161d] border border-slate-800 p-4 rounded-xl shadow-2xl overflow-hidden">
+                <div
+                    class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800 text-[10px] font-mono text-slate-400">
+                    <span class="text-[#00ff66]">INSPECTION FEED</span>
+                    <span>YOLOv8 MODEL ACTIVE</span>
+                </div>
+                <!-- Simple Clean Image Container -->
+                <div class="relative rounded-lg overflow-hidden border border-slate-800 bg-black h-80">
+                    <img src="{{ url_for('static', filename='/images/h1.png') }}"
+                        alt="PCB Factory Scan"
+                        class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dynamic Metrics Bar (Linked to Database Inspection Logs) -->
+    <section class="border-y border-slate-800 bg-[#0c0f14] py-8 px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center font-mono">
+            <div class="p-3 rounded-lg hover:bg-slate-800/40 transition">
+                <h3 class="text-3xl font-bold text-[#00ff66]">{{ accuracy_rate }}%</h3>
+                <p class="text-xs text-slate-400 mt-1 tracking-wider">ACCURACY RATE</p>
+            </div>
+            <div class="p-3 rounded-lg hover:bg-slate-800/40 transition">
+                <h3 class="text-3xl font-bold text-white">500+</h3>
+                <p class="text-xs text-slate-400 mt-1 tracking-wider">SMT LINES MANAGED</p>
+            </div>
+            <div class="p-3 rounded-lg hover:bg-slate-800/40 transition">
+                <h3 class="text-3xl font-bold text-white">{{ total_scanned }}</h3>
+                <p class="text-xs text-slate-400 mt-1 tracking-wider">BOARDS INSPECTED</p>
+            </div>
+            <div class="p-3 rounded-lg hover:bg-slate-800/40 transition">
+                <h3 class="text-3xl font-bold text-white">42ms</h3>
+                <p class="text-xs text-slate-400 mt-1 tracking-wider">INFERENCE LATENCY</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive 3-Step Automated Inspection Section -->
+    <section class="px-8 py-24 max-w-7xl mx-auto w-full space-y-12">
+        <div class="text-center space-y-2">
+            <span class="text-xs text-[#00ff66] font-semibold tracking-wider uppercase">End-to-End Workflow</span>
+            <h2 class="text-2xl lg:text-3xl font-bold text-white tracking-wide">3-Step Automated Inspection</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+                class="bg-[#12161d] border border-slate-800 hover:border-[#00ff66]/50 p-6 rounded-xl space-y-3 transition transform hover:-translate-y-1 duration-300">
+                <span
+                    class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/10 px-2.5 py-1 rounded border border-[#00ff66]/20">01
+                    / CAPTURE</span>
+                <h3 class="font-bold text-white text-lg">Upload PCB Image</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">High-speed camera captures ultra-high-resolution PCB
+                    transparently directly from the conveyor belt.</p>
+            </div>
+            <div
+                class="bg-[#12161d] border border-slate-800 hover:border-[#00ff66]/50 p-6 rounded-xl space-y-3 transition transform hover:-translate-y-1 duration-300">
+                <span
+                    class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/10 px-2.5 py-1 rounded border border-[#00ff66]/20">02
+                    / INFERENCE</span>
+                <h3 class="font-bold text-white text-lg">AI Detects Defects</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">YOLOv8 DeepPCB models process imagery under 50ms,
+                    highlighting cracks, solder drips, or bridges.</p>
+            </div>
+            <div
+                class="bg-[#12161d] border border-slate-800 hover:border-[#00ff66]/50 p-6 rounded-xl space-y-3 transition transform hover:-translate-y-1 duration-300">
+                <span
+                    class="text-xs font-mono text-[#00ff66] bg-[#00ff66]/10 px-2.5 py-1 rounded border border-[#00ff66]/20">03
+                    / ACTION</span>
+                <h3 class="font-bold text-white text-lg">Robotic Sort &amp; Remove</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">Integrated robotic arms trigger instantly to discard
+                    or isolate any flagged board automatically.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Built for Modern Heavy Lines -->
+    <section class="border-y border-slate-800 bg-[#0c0f14] py-24 px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+            <div class="space-y-4">
+                <span class="text-xs text-[#00ff66] font-semibold tracking-wider uppercase font-mono">Factory
+                    Integration Features</span>
+                <h2 class="text-3xl font-bold text-white tracking-wide">Built for Modern Heavy Lines</h2>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    Our system drops into your existing physical environment without interrupting layout footprints or
+                    assembly speeds.
+                </p>
+            </div>
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div
+                    class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2 hover:border-[#00ff66]/40 transition">
+                    <h3 class="text-[#00ff66] font-bold text-sm tracking-wider">Real-Time Defect Detection</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Identify misalignment, bridges, cracks, or faulty
+                        components in milliseconds.</p>
+                </div>
+                <div
+                    class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2 hover:border-[#00ff66]/40 transition">
+                    <h3 class="text-[#00ff66] font-bold text-sm tracking-wider">Conveyor Belt Sync</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Synchronize seamlessly with speed encoders of your
+                        current line setup.</p>
+                </div>
+                <div
+                    class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2 hover:border-[#00ff66]/40 transition">
+                    <h3 class="text-[#00ff66] font-bold text-sm tracking-wider">Automated Reject Trigger</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Output standard signals directly to pneumatic
+                        sorting gates or robotic arms.</p>
+                </div>
+                <div
+                    class="bg-[#12161d] border border-slate-800 p-6 rounded-xl space-y-2 hover:border-[#00ff66]/40 transition">
+                    <h3 class="text-[#00ff66] font-bold text-sm tracking-wider">Detailed Quality Reports</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Access granular cloud audit logs and performance
+                        charts in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Micro-Defect Detection Accuracy Comparison -->
+    <section class="px-8 py-24 max-w-7xl mx-auto w-full space-y-12">
+        <div class="text-center space-y-2">
+            <span class="text-xs text-[#00ff66] font-semibold tracking-wider uppercase font-mono">Visual Comparison
+                Framework</span>
+            <h2 class="text-2xl lg:text-3xl font-bold text-white tracking-wide">Micro-Defect Detection Accuracy</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-[#12161d] border border-slate-800 p-4 rounded-xl space-y-4">
+                <div class="relative rounded-lg overflow-hidden border border-slate-800 bg-black h-80">
+                    <img src="../static/images/h2.png"
+                        alt="Raw PCB Board View" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-white font-bold text-sm">Raw Board View</h3>
+                    <p class="text-xs text-slate-400">Standard conveyor line camera perspective under bright overhead
+                        room lighting.</p>
+                </div>
+            </div>
+            <div class="bg-[#12161d] border border-slate-800 p-4 rounded-xl space-y-4">
+                <div class="relative rounded-lg overflow-hidden border border-slate-800 bg-black h-80">
+                    <img src="../static/images/h2.1.png"
+                        alt="PCB Sentry Real-time Scan" class="w-full h-full object-cover opacity-75">
+                    <div
+                        class="absolute top-10 left-12 border border-red-500 bg-red-500/20 px-2 py-1 rounded text-[10px] font-mono text-red-300">
+                        ⚠ DETECTED: SHORT_CIRCUIT
+                    </div>
+                    <div
+                        class="absolute bottom-12 right-16 border border-emerald-500 bg-emerald-500/20 px-2 py-1 rounded text-[10px] font-mono text-emerald-300">
+                        ✔ TRACE ALIGNMENT OK
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-white font-bold text-sm">PCB Sentry Real-time Scan</h3>
+                    <p class="text-xs text-slate-400">Bounding boxes, precise trace checks, sorting pneumatic robot arm
+                        output board.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Improved Professional Footer -->
+    <footer class="border-t border-slate-800 bg-[#0c0f14] py-12 px-8 mt-auto font-mono text-xs">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-slate-400 space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <span class="text-white font-bold">PCB-SENTRY AOI</span>
+                <span>&copy; Industrial Vision Systems. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-6 text-slate-400">
+                <a href="/" class="hover:text-[#00ff66] transition">Home</a>
+                <a href="/how-it-works" class="hover:text-[#00ff66] transition">Architecture</a>
+                <a href="/audit-logs" class="hover:text-[#00ff66] transition">Audit Log</a>
+                <a href="/contact" class="hover:text-[#00ff66] transition">Support Desk</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
