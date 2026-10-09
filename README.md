@@ -42,31 +42,31 @@ Auto-Defect System in PCB/
 ## ⚙️ Installation & Local Setup
 Follow these steps to set up and run the project locally on your machine:
 
-*1. Clone the Repository
-   git clone [https://github.com/niteshkumhar/Nitesh_ADST_FINAL_PROJECT.git](https://github.com/niteshkumhar/Nitesh_ADST_FINAL_PROJECT.git))
+* 1. Clone the Repository
+  git clone [https://github.com/niteshkumhar/Nitesh_ADST_FINAL_PROJECT.git](https://github.com/niteshkumhar/Nitesh_ADST_FINAL_PROJECT.git))
 
-*2. Create and Activate a Virtual Environment
-    python -m venv pcb_env
+* 2. Create and Activate a Virtual Environment
+    **python -m venv pcb_env**
       # On Windows:
             pcb_env\Scripts\activate
       # On macOS/Linux:
              source pcb_env/bin/activate   
 
-*3. Install Dependencies
-   pip install -r requirements.txt
+* 3. Install Dependencies
+    **pip install -r requirements.txt**
 
-*4. Run the Flask Application
-   python app.py
+* 4. Run the Flask Application
+    **python app.py**
 
 ---
 
 ## 💡 Usage Workflow
 
-*1. Operator Onboarding / Sign-In: Access the secure glassmorphic authentication console (/login or /signup).
+* **1. Operator Onboarding / Sign-In:** Access the secure glassmorphic authentication console (/login or /signup).
 
-*2. Live Feed & Inspection Dashboard: Monitor production line metrics, active SMT nodes, and real-time inference streams.
+* **2. Live Feed & Inspection Dashboard:** Monitor production line metrics, active SMT nodes, and real-time inference streams.
 
-*3. Audit History & Reporting: Review historical batch inspection logs, bounding-box outputs, and compliance reports stored in the database.
+* **3. Audit History & Reporting:** Review historical batch inspection logs, bounding-box outputs, and compliance reports stored in the database.
 
 ---
 
